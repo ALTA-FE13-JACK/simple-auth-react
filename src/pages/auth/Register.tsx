@@ -7,13 +7,13 @@ export class Register extends Component {
   render() {
     return (
       <Layout>
-        <form className="flex flex-col items-center item gap-2 min-w-96 ">
-          <Input placeholder="First Name" />
-          <Input placeholder="Last Name" />
-
+        <form className="flex flex-col items-center gap-4 w-[40%] ">
+          <h1 className="font-bold -30">SIGN UP</h1>
+          <div className="flex gap-4 w-[100%]">
+            <Input placeholder="First Name" />
+            <Input placeholder="Last Name" />
+          </div>
           <Input placeholder="Username" />
-          <Input placeholder="Username" />
-
           <Input placeholder="Password" type="password" />
           <Button label="Register" />
         </form>
