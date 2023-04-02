@@ -1,37 +1,44 @@
 import { Component } from "react";
 
-import Layout from "../components/Layout";
-import { UserType } from "../utils/types/user";
+import Layout from "@/components/Layout";
+import { UserType } from "@/utils/types/user";
 
 interface PropsType {}
 
 interface StateType {
-  datas: UserType[];
-  loading: boolean;
+  data: Partial<UserType>;
 }
 
 export class Profile extends Component<PropsType, StateType> {
   constructor(props: PropsType) {
     super(props);
     this.state = {
-      datas: {
-        id: 1,
-        first_name: "Rich",
-        last_name: "Agus",
-        username: "agus_rich",
-        images:
-          "https://media.istockphoto.com/id/1300845620/id/vektor/ikon-pengguna-datar-terisolasi-pada-latar-belakang-putih-simbol-pengguna-ilustrasi-vektor.jpg?s=612x612&w=0&k=20&c=QN0LOsRwA1dHZz9lsKavYdSqUUnis3__FQLtZTQ--Ro=",
-      },
+      data: {},
     };
+  }
+  componentDidMount(): void {
+    this.fecthData();
+  }
+
+  fecthData() {
+    const temp = {
+      id: 1,
+      first_name: "First",
+      last_name: "Last",
+      username: "testing",
+      image:
+        "https://upload.wikimedia.org/wikipedia/commons/8/89/Portrait_Placeholder.png",
+    };
+    this.setState({ data: temp });
   }
 
   render() {
-    const { images, username, first_name, last_name } = this.state.datas;
+    const { image, username, first_name, last_name } = this.state.data;
     return (
       <Layout>
         <div className="flex flex-col items-center gap-3">
           <img
-            src={images}
+            src={image}
             alt={` ${username}'s picture`}
             className="rounded-full w-48 aspect-square"
           />

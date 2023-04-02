@@ -1,7 +1,7 @@
 import { Component } from "react";
-import Layout from "../../components/Layout";
-import Input from "../../components/Input";
-import Button from "../../components/Button";
+import Layout from "@/components/Layout";
+import Input from "@/components/Input";
+import Button from "@/components/Button";
 
 export class Register extends Component {
   render() {

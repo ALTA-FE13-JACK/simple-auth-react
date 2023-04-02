@@ -1,8 +1,9 @@
 import { Component } from "react";
-import Card from "../components/Card";
+import axios from "axios";
+import Card from "@/components/Card";
 
-import Layout from "../components/Layout";
-import { UserType } from "../utils/types/user";
+import Layout from "@/components/Layout";
+import { UserType } from "@/utils/types/user";
 
 interface PropsType {}
 
@@ -22,45 +23,45 @@ class home extends Component<PropsType, StateType> {
 
   componentDidMount(): void {
     this.fetchData();
-    this.fetchProfile();
+    // this.fetchAlternative();
   }
-
-  fetchProfile() {
-    console.log(this.state.loading);
-  }
-
   fetchData() {
-    let temp: UserType[] = [];
-    for (let i = 1; i <= 12; i++) {
-      const obj = {
-        id: i,
-        first_name: "Rich",
-        last_name: "Agus",
-        username: `agus_rich${i}`,
-        images:
-          "https://media.istockphoto.com/id/1300845620/id/vektor/ikon-pengguna-datar-terisolasi-pada-latar-belakang-putih-simbol-pengguna-ilustrasi-vektor.jpg?s=612x612&w=0&k=20&c=QN0LOsRwA1dHZz9lsKavYdSqUUnis3__FQLtZTQ--Ro=",
-      };
-      temp.push(obj);
-    }
-    setTimeout(() => {
-      this.setState({
-        datas: temp,
-        loading: false,
+    axios
+      .get("users")
+      .then((response) => {
+        const { data } = response.data;
+        this.setState({ datas: data });
+        // console.log(response.data.data);
+      })
+      .catch((error) => {
+        console.log(error);
+      })
+      .finally(() => {});
+  }
+
+  fetchAlternative() {
+    fetch(
+      "https://virtserver.swaggerhub.com/devanada/hells-kitchen/1.1.0/users"
+    )
+      .then((result) => result.json())
+      .then((response) => {
+        const { data } = response.data;
+        this.setState({ datas: data });
+        console.log(response.data.data);
       });
-    }, 300);
   }
 
   render() {
     return (
       <Layout>
-        <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6">
+        <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
           {this.state.datas.map((data) => (
             <Card
               key={data.id}
               fisrt_name={data.first_name}
               last_name={data.last_name}
               username={data.username}
-              images={data.images}
+              image={data.image}
             />
           ))}
         </div>
