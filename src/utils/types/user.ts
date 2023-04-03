@@ -3,5 +3,8 @@ export interface UserType {
   first_name: string;
   last_name: string;
   username: string;
-  image: string;
+  image: any;
+}
+export interface UserEdit extends UserType {
+  password?: string;
 }

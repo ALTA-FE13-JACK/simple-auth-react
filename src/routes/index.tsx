@@ -11,7 +11,7 @@ axios.defaults.baseURL =
 
 export class Router extends Component {
   render() {
-    return <Profile />;
+    return <Home />;
   }
 }
 

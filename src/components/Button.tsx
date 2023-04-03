@@ -8,7 +8,7 @@ class Button extends Component<props> {
   render() {
     return (
       <button
-        className="bg-sky-900 text-white font-bold py-2 px-4 rounded-full border-white"
+        className="bg-sky-900 text-white font-bold py-2 px-4 rounded-full border-white disabled:bg-gray-600"
         {...this.props}
       >
         {this.props.label}

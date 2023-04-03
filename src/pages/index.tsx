@@ -8,7 +8,7 @@ import { UserType } from "@/utils/types/user";
 interface PropsType {}
 
 interface StateType {
-  datas: UserType[];
+  data: UserType[];
   loading: boolean;
 }
 
@@ -16,7 +16,7 @@ class home extends Component<PropsType, StateType> {
   constructor(props: PropsType) {
     super(props);
     this.state = {
-      datas: [],
+      data: [],
       loading: true,
     };
   }
@@ -30,8 +30,8 @@ class home extends Component<PropsType, StateType> {
       .get("users")
       .then((response) => {
         const { data } = response.data;
-        this.setState({ datas: data });
-        // console.log(response.data.data);
+        this.setState({ data: data });
+        console.log(response.data.data);
       })
       .catch((error) => {
         console.log(error);
@@ -46,7 +46,7 @@ class home extends Component<PropsType, StateType> {
       .then((result) => result.json())
       .then((response) => {
         const { data } = response.data;
-        this.setState({ datas: data });
+        this.setState({ data: data });
         console.log(response.data.data);
       });
   }
@@ -55,7 +55,7 @@ class home extends Component<PropsType, StateType> {
     return (
       <Layout>
         <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
-          {this.state.datas.map((data) => (
+          {this.state.data.map((data) => (
             <Card
               key={data.id}
               fisrt_name={data.first_name}
