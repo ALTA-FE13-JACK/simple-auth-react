@@ -1,20 +1,23 @@
-import { Menu, Transition } from "@headlessui/react";
-import { Component, Fragment } from "react";
-import Images from "../assets/react.svg";
 import {
   HiMenu,
   HiUser,
   HiOutlineLogin,
   HiOutlineUserAdd,
 } from "react-icons/hi";
+import { Menu, Transition } from "@headlessui/react";
+import { Component, Fragment } from "react";
+import { Link } from "react-router-dom";
 
-export class Navbar extends Component {
+import withRouter, { NavigateParams } from "@/utils/navigation";
+import Images from "../assets/react.svg";
+
+export class Navbar extends Component<NavigateParams> {
   render() {
     return (
       <nav className="bg-cyan-900 w-full h-12 flex items-center justify-between p-5">
-        <div>
+        <Link to="/">
           <img src={Images} alt="" />
-        </div>
+        </Link>
         <Menu as="div" className="relative inline-block text-left">
           <div>
             <Menu.Button className="inline-flex w-full justify-center rounded-md bg-black bg-opacity-20 px-4 py-2 text-sm font-medium text-white hover:bg-opacity-30 focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75">
@@ -31,13 +34,13 @@ export class Navbar extends Component {
             leaveTo="transform opacity-0 scale-95"
           >
             <Menu.Items className="absolute right-0 mt-2 w-56 origin-top-right divide-y divide-gray-100 rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
-              <div className="px-1 py-1 "></div>
               <Menu.Item>
                 {({ active }) => (
                   <button
                     className={`${
                       active ? "bg-cyan-900 text-white" : "text-gray-900"
                     } group flex w-full items-center rounded-md px-2 py-2 text-sm`}
+                    onClick={() => this.props.navigate(`profile/testing`)}
                   >
                     {" "}
                     <HiUser className="h-5 mr-2" />
@@ -51,10 +54,11 @@ export class Navbar extends Component {
                     className={`${
                       active ? "bg-cyan-900 text-white" : "text-gray-900"
                     } group flex w-full items-center rounded-md px-2 py-2 text-sm`}
+                    onClick={() => this.props.navigate(`/login`)}
                   >
                     {" "}
                     <HiOutlineLogin className="h-5 mr-2" />
-                    <a href="./pages/auth/Login"> Login</a>
+                    <a> Login</a>
                   </button>
                 )}
               </Menu.Item>
@@ -64,6 +68,7 @@ export class Navbar extends Component {
                     className={`${
                       active ? "bg-cyan-900 text-white" : "text-gray-900"
                     } group flex w-full items-center rounded-md px-2 py-2 text-sm`}
+                    onClick={() => this.props.navigate(`/register`)}
                   >
                     {" "}
                     <HiOutlineUserAdd className="h-5 mr-2" />
@@ -78,4 +83,4 @@ export class Navbar extends Component {
     );
   }
 }
-export default Navbar;
+export default withRouter(Navbar);

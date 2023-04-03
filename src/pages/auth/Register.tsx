@@ -3,8 +3,10 @@ import Layout from "@/components/Layout";
 import Input from "@/components/Input";
 import Button from "@/components/Button";
 import axios from "axios";
+import { Link } from "react-router-dom";
+import withRouter, { NavigateParams } from "@/utils/navigation";
 
-interface PropsType {}
+interface PropsType extends NavigateParams {}
 
 interface StateType {
   username: string;
@@ -38,7 +40,8 @@ export class Register extends Component<PropsType, StateType> {
       .post(`register`, body)
       .then((response) => {
         const { data } = response;
-        // console.log(data);
+        alert(data.message);
+        this.props.navigate("/login");
       })
       .catch((error) => {
         alert(error.toSting());
@@ -83,6 +86,13 @@ export class Register extends Component<PropsType, StateType> {
               this.setState({ password: event.target.value })
             }
           />
+          <p>
+            Already have an account? Login{" "}
+            <Link to="/login" className="font-bold">
+              {" "}
+              here!
+            </Link>
+          </p>
           <Button
             label="Register"
             id="button-register"
@@ -100,4 +110,4 @@ export class Register extends Component<PropsType, StateType> {
   }
 }
 
-export default Register;
+export default withRouter(Register);

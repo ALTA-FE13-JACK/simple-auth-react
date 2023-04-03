@@ -1,3 +1,4 @@
+import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import { Component } from "react";
 import axios from "axios";
 
@@ -9,9 +10,28 @@ import Profile from "@/pages/Profile";
 axios.defaults.baseURL =
   "https://virtserver.swaggerhub.com/devanada/hells-kitchen/1.1.0";
 
+const router = createBrowserRouter([
+  {
+    path: "/",
+    element: <Home />,
+  },
+  {
+    path: "/login",
+    element: <Login />,
+  },
+  {
+    path: "/register",
+    element: <Register />,
+  },
+  {
+    path: "profile/:username",
+    element: <Profile />,
+  },
+]);
+
 export class Router extends Component {
   render() {
-    return <Home />;
+    return <RouterProvider router={router} />;
   }
 }
 

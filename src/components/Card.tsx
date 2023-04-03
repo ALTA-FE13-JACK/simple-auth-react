@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-
+import { Link } from "react-router-dom";
 interface props {
   image: string;
   username: string;
@@ -18,9 +18,9 @@ export class Card extends Component<props> {
           alt={` ${username}'s picture`}
           className="rounded-full w-28 aspect-square"
         />
-        <p className="font-bold tracking-wider">
+        <Link to={`profile/${username}`} className="font-bold tracking-wider">
           {fisrt_name} {last_name}
-        </p>
+        </Link>
         <p className="text-sm">{username}</p>
       </div>
     );

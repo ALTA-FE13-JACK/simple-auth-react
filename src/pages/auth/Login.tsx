@@ -1,10 +1,12 @@
 import { Component, FormEvent } from "react";
 import Layout from "@/components/Layout";
-import Input from "@/components/Input";
+import { Input } from "@/components/Input";
 import Button from "@/components/Button";
 import axios from "axios";
+import { Link } from "react-router-dom";
+import withRouter, { NavigateParams } from "@/utils/navigation";
 
-interface PropsType {}
+interface PropsType extends NavigateParams {}
 
 interface StateType {
   username: string;
@@ -32,7 +34,8 @@ export class Login extends Component<PropsType, StateType> {
       .post(`login`, body)
       .then((response) => {
         const { data } = response;
-        // console.log(data);
+        alert(data.message);
+        this.props.navigate("/");
       })
       .catch((error) => {
         alert(error.toSting());
@@ -63,6 +66,13 @@ export class Login extends Component<PropsType, StateType> {
               this.setState({ password: event.target.value })
             }
           />
+          <p>
+            Don't have account?{" "}
+            <Link to="/register" className="font-bold">
+              {" "}
+              create acoount!
+            </Link>
+          </p>
           <Button
             label="Login"
             id="button-login"
@@ -75,4 +85,4 @@ export class Login extends Component<PropsType, StateType> {
   }
 }
 
-export default Login;
+export default withRouter(Login);

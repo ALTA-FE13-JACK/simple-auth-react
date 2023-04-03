@@ -1,11 +1,12 @@
 import { Component, FormEvent } from "react";
-import axios from "axios";
-import Layout from "@/components/Layout";
 import { UserEdit } from "@/utils/types/user";
-import Input from "@/components/Input";
+import Layout from "@/components/Layout";
 import Button from "@/components/Button";
+import Input from "@/components/Input";
+import axios from "axios";
+import withRouter, { NavigateParams } from "@/utils/navigation";
 
-interface PropsType {}
+interface PropsType extends NavigateParams {}
 
 interface StateType {
   data: Partial<UserEdit>;
@@ -56,8 +57,9 @@ export class Profile extends Component<PropsType, StateType> {
   }
 
   fecthData() {
+    const { username } = this.props.params;
     axios
-      .get("users/testing")
+      .get(`users/${username}`)
       .then((response) => {
         const { data } = response.data;
         this.setState({ data: data, image: data.image });
@@ -161,4 +163,4 @@ export class Profile extends Component<PropsType, StateType> {
   }
 }
 
-export default Profile;
+export default withRouter(Profile);
