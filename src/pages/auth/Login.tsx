@@ -1,12 +1,18 @@
-// import withRouter, { NavigateParams } from "@/utils/navigation";
-import { FC, FormEvent, useState, useEffect } from "react";
+import { FC, FormEvent, useEffect, useState } from "react";
+import withReactContent from "sweetalert2-react-content";
 import { Link, useNavigate } from "react-router-dom";
-import { Input } from "@/components/Input";
-import { useTitle } from "@/utils/hooks";
-
-import Layout from "@/components/Layout";
-import Button from "@/components/Button";
+import { useCookies } from "react-cookie";
+import { useDispatch } from "react-redux";
 import axios from "axios";
+
+import Form from "@/components/Form";
+import Image from "@/assets/react.svg";
+import { Input } from "@/components/Input"; // named import
+import Layout from "@/components/Layout";
+import Button from "@/components/Button"; // import default
+import { handleAuth } from "@/utils/redux/reducers/reducer";
+import { useTitle } from "@/utils/hooks";
+import Swal from "@/utils/swal";
 
 interface ObjSubmitType {
   username: string;
@@ -18,8 +24,9 @@ const Login: FC = () => {
     username: "",
     password: "",
   });
-  const [loading, setLoading] = useState(false);
-  const [isDisable, setIsDisable] = useState(true);
+  const [isDisabled, setIsDisabled] = useState(true);
+  const MySwal = withReactContent(Swal);
+  const [, setCookie] = useCookies();
   const navigate = useNavigate();
   useTitle("Login | User Management");
 
@@ -27,67 +34,86 @@ const Login: FC = () => {
     const isEmpty = Object.values(objSubmit).every((val) => {
       return val !== "";
     });
-    setIsDisable(!isEmpty);
+    setIsDisabled(!isEmpty);
   }, [objSubmit]);
 
   function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    setIsDisable(true);
+    setIsDisabled(true);
     axios
-      .post(`login`, objSubmit)
+      .post("login", objSubmit)
       .then((response) => {
-        const { data } = response;
-        alert(data.message);
-        navigate("/");
+        const { data, message } = response.data;
+        MySwal.fire({
+          title: "Success",
+          text: message,
+          showCancelButton: false,
+        }).then((result) => {
+          if (result.isConfirmed) {
+            setCookie("tkn", data.token);
+            setCookie("uname", data.username);
+            // localStorage.setItem("tkn", data.token) // disimpan dengan nama tkn dan nilai harus string
+            // localStorage.setItem("uname", data.username) // disimpan dengan nama uname dan nilai harus string
+            navigate("/");
+          }
+        });
       })
       .catch((error) => {
-        alert(error.toSting());
+        const { data } = error.response;
+        MySwal.fire({
+          title: "Failed",
+          text: data.message,
+          showCancelButton: false,
+        });
       })
-      .finally(() => setIsDisable(false));
+      .finally(() => setIsDisabled(false));
   }
 
   return (
     <Layout>
-      <form
-        className="flex flex-col items-center gap-3"
-        // onSubmit={this.handleSubmit}
-        onSubmit={(event) => handleSubmit(event)}
-      >
-        <h1 className="font-bold text-3xl">Login</h1>
-        <Input
-          placeholder="Username"
-          id="input-username"
-          type="username"
-          onChange={(event) =>
-            setObjSubmit({ ...objSubmit, username: event.target.value })
-          }
-        />
+      <Form>
+        <form
+          className="flex flex-col p-5 items-center gap-3"
+          // onSubmit={this.handleSubmit}
+          onSubmit={(event) => handleSubmit(event)}
+        >
+          <h1 className="font-bold text-3xl text-back dark:text-white">
+            LOGIN
+          </h1>
+          <Input
+            placeholder="Username"
+            id="input-uname"
+            type="username"
+            onChange={(event) =>
+              setObjSubmit({ ...objSubmit, username: event.target.value })
+            }
+          />
 
-        <Input
-          placeholder="Password"
-          id="input-password"
-          type="password"
-          onChange={(event) =>
-            setObjSubmit({ ...objSubmit, password: event.target.value })
-          }
-        />
-        <p>
-          Don't have account?{" "}
-          <Link to="/register" className="font-bold" id="nav-register ">
-            {" "}
-            create acoount!
-          </Link>
-        </p>
-        <Button
-          label="Login"
-          id="button-login"
-          type="submit"
-          disabled={isDisable}
-        />
-      </form>
+          <Input
+            placeholder="Password"
+            id="input-password"
+            type="password"
+            onChange={(event) =>
+              setObjSubmit({ ...objSubmit, password: event.target.value })
+            }
+          />
+          <p className="text-black dark:text-white">
+            Don't have account?{" "}
+            <Link to="/register" className="font-bold" id="nav-register ">
+              {" "}
+              create acoount!
+            </Link>
+          </p>
+          <Button
+            label="Login"
+            id="button-login"
+            type="submit"
+            disabled={isDisabled}
+          />
+        </form>
+      </Form>
     </Layout>
   );
 };
 
 export default Login;
-// export default withRouter(Login);

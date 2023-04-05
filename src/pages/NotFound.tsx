@@ -1,7 +1,6 @@
 import { FC } from "react";
 
 import Layout from "@/components/Layout";
-import { useTitle } from "@/utils/hooks";
 
 const NotFound: FC = () => {
   return (

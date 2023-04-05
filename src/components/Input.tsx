@@ -1,26 +1,28 @@
-import React, { FC, InputHTMLAttributes, TextareaHTMLAttributes } from "react";
+import { FC, InputHTMLAttributes, TextareaHTMLAttributes } from "react";
 
 export const Input: FC<InputHTMLAttributes<HTMLInputElement>> = (props) => {
-  const { placeholder } = props;
+  const { placeholder, id } = props;
+
   return (
     <div>
-      <label className="text-black p-1 tracking-wide  w-full">
+      <label className="text-black dark:text-white tracking-wider" htmlFor={id}>
         {placeholder}
       </label>
       <input
-        className="boarder rounded-md bg-slate-100 text-black p-2 focus:outline-none focus:boarder-sky-500 focus:ring-2 w-full"
+        className="border rounded-lg bg-slate-200 border-slate-400 text-black p-2 focus:outline-none focus:border-blue-900 focus:ring-1 focus:ring-blue-900 w-full"
         {...props}
       />
     </div>
   );
 };
-export const textArea: FC<InputHTMLAttributes<HTMLInputElement>> = (props) => {
+
+export const TextArea: FC<TextareaHTMLAttributes<HTMLTextAreaElement>> = (
+  props
+) => {
   return (
-    <input
-      className="boarder rounded-md bg-slate-100 text-black p-2 focus:outline-none focus:boarder-sky-500 focus:ring-2 w-full"
+    <textarea
+      className="border rounded-lg bg-slate-200 text-black p-2 focus:outline-none focus:border-blue-900 focus:ring-1 focus:ring-blue-900 w-full"
       {...props}
     />
   );
 };
-
-export default Input;

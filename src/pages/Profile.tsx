@@ -1,39 +1,42 @@
-import { FC, FormEvent, useState, useEffect } from "react";
+import { FC, FormEvent, useEffect, useState } from "react";
+import withReactContent from "sweetalert2-react-content";
 import { useParams } from "react-router-dom";
+import { useSelector } from "react-redux";
+import axios from "axios";
+
+import Form from "@/components/Form";
+import { RootState } from "@/utils/types/redux";
 import { UserEdit } from "@/utils/types/user";
 import { useTitle } from "@/utils/hooks";
-
+import Swal from "@/utils/swal";
+import { Input } from "@/components/Input";
 import Layout from "@/components/Layout";
 import Button from "@/components/Button";
-import Input from "@/components/Input";
-import axios from "axios";
-import withRouter, { NavigateParams } from "@/utils/navigation";
 
 const Profile: FC = () => {
+  const { token, uname } = useSelector((state: RootState) => state.data);
   const [objSubmit, setObjSubmit] = useState<Partial<UserEdit>>({});
-  const [image, setImage] = useState<string>("");
   const [data, setData] = useState<Partial<UserEdit>>({});
   const [loading, setLoading] = useState<boolean>(true);
   const [isEdit, setIsEdit] = useState<boolean>(false);
   const params = useParams();
-  useTitle("Profile | User Management");
+  const MySwal = withReactContent(Swal);
 
   useEffect(() => {
-    fecthData();
+    fetchData();
   }, []);
 
-  function fecthData() {
-    const { username } = params;
+  function fetchData() {
+    const { username: uname } = params;
     axios
-      .get(`users/${username}`)
+      .get(`users/${uname}`)
       .then((response) => {
         const { data } = response.data;
-        // document.title = `Profile ${username} | User Management`;
+        document.title = `${data.username} | User Management`;
         setData(data);
-        setImage(data.image);
       })
       .catch((error) => {
-        alert(error.toSting());
+        alert(error.toString());
       })
       .finally(() => setLoading(false));
   }
@@ -52,100 +55,147 @@ const Profile: FC = () => {
       formData.append(key, objSubmit[key]);
     }
     axios
-      .put(`users`, formData, {
+      .put("users", formData, {
         headers: {
           "Content-Type": "multipart/form-data",
+          Authorization: `Bearer ${token}`,
         },
       })
       .then((response) => {
-        const { data } = response;
+        const { message } = response.data;
+        MySwal.fire({
+          title: "Success",
+          text: message,
+          showCancelButton: false,
+        });
         setIsEdit(false);
-        console.log(data);
+        setObjSubmit({});
       })
       .catch((error) => {
-        alert(error.toSting());
+        const { data } = error.response;
+        MySwal.fire({
+          title: "Failed",
+          text: data.message,
+          showCancelButton: false,
+        });
       })
-      .finally(() => fecthData());
+      .finally(() => fetchData());
   }
 
-  const handleEditMode = () => {
-    setIsEdit(isEdit);
+  const handleDeleteAccount = () => {
+    axios
+      .delete("/users", {
+        headers: {
+          Authorization: "",
+        },
+      })
+      .then((response) => {
+        const { message } = response.data;
+        MySwal.fire({
+          title: "Success",
+          text: message,
+          showCancelButton: false,
+        });
+      })
+      .catch((error) => {
+        const { data } = error.response;
+        MySwal.fire({
+          title: "Failed",
+          text: data.message,
+          showCancelButton: false,
+        });
+      });
   };
 
-  const { username, first_name, last_name, password } = data;
   return (
     <Layout>
-      <div className="flex flex-col items-center gap-3 mb-3">
-        <img
-          src={image}
-          alt={` ${username}'s picture`}
-          className="rounded-full w-48 aspect-square"
-        />
-        {isEdit ? (
-          <form
-            className="flex flex-col items-center gap-3"
-            onSubmit={(event) => handleSubmit(event)}
-          >
-            <Input
-              placeholder="Select Image"
-              type="file"
-              onChange={(event) => {
-                if (!event.currentTarget.files) {
-                  return;
+      <Form>
+        <div className="flex flex-col p-5 items-center dark:text-white">
+          <img
+            src={data.image}
+            alt={`${data.username}'s profile picture`}
+            className="w-44 h-44 rounded-full "
+          />
+          {isEdit ? (
+            <form onSubmit={(event) => handleSubmit(event)}>
+              <Input
+                placeholder="Select Image"
+                type="file"
+                onChange={(event) => {
+                  if (!event.currentTarget.files) {
+                    return;
+                  }
+                  setData({
+                    ...data,
+                    image: URL.createObjectURL(event.currentTarget.files[0]),
+                  });
+                  handleChange(event.currentTarget.files[0], "image");
+                }}
+              />
+              <Input
+                placeholder="First Name"
+                defaultValue={data.first_name}
+                onChange={(event) =>
+                  handleChange(event.target.value, "first_name")
                 }
-                setImage(URL.createObjectURL(event.currentTarget.files[0]));
-
-                handleChange(event.currentTarget.files[0], "image");
-              }}
-            />
-            <Input
-              placeholder="First Name"
-              defaultValue={first_name}
-              onChange={(event) =>
-                handleChange(event.target.value, "first_name")
-              }
-            />
-            <Input
-              placeholder="Last Name"
-              defaultValue={last_name}
-              onChange={(event) =>
-                handleChange(event.target.value, "last_name")
-              }
-            />
-            <Input
-              placeholder="Username"
-              defaultValue={username}
-              onChange={(event) => handleChange(event.target.value, "username")}
-            />
-            <Input
-              placeholder="Password"
-              defaultValue={password}
-              onChange={(event) => handleChange(event.target.value, "password")}
-            />
-            <Button
-              label="Submit"
-              id="button-submit"
-              type="submit"
-              // disabled={
-              //   first_name === "" ||
-              //   last_name === "" ||
-              //   username === "" ||
-              //   password === ""
-              // }
-            />
-          </form>
-        ) : (
-          <div>
-            <p className="font-bold ">
-              {first_name} {last_name}
-            </p>
-            <p>{username}</p>
-          </div>
-        )}
-      </div>
-      <Button label="Edit Profile" id="button-edit" onClick={handleEditMode} />
+              />
+              <Input
+                placeholder="Last Name"
+                defaultValue={data.last_name}
+                onChange={(event) =>
+                  handleChange(event.target.value, "last_name")
+                }
+              />
+              <Input
+                placeholder="Username"
+                defaultValue={data.first_name}
+                onChange={(event) =>
+                  handleChange(event.target.value, "username")
+                }
+              />
+              <Input
+                placeholder="Password"
+                defaultValue={data.password}
+                onChange={(event) =>
+                  handleChange(event.target.value, "password")
+                }
+              />
+              <div className="flex flex-col items-center mt-2">
+                <Button label="Submit" id="button-submit" type="submit" />
+              </div>
+            </form>
+          ) : (
+            <div>
+              <p>
+                {data.first_name} {data.last_name}
+              </p>
+              <p>{data.username}</p>
+            </div>
+          )}
+          {uname === params.username && (
+            <>
+              <div className="flex flex-row">
+                <div className="p-3">
+                  <Button
+                    label="Edit Profile"
+                    id="button-edit"
+                    onClick={() => setIsEdit(!isEdit)}
+                  />
+                </div>
+                <div className="p-3">
+                  <Button
+                    label="Delete Account"
+                    id="button-delete"
+                    onClick={() => handleDeleteAccount()}
+                  />
+                </div>
+              </div>
+            </>
+          )}
+        </div>
+      </Form>
     </Layout>
   );
 };
 
-export default withRouter(Profile);
+export default Profile;

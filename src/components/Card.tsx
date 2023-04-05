@@ -1,27 +1,34 @@
-import React, { FC } from "react";
 import { Link } from "react-router-dom";
-interface props {
+import { FC } from "react";
+import Form from "./Form";
+
+interface Props {
   image: string;
   username: string;
   first_name: string;
   last_name: string;
 }
 
-export const Card: FC<props> = (props) => {
+const Card: FC<Props> = (props) => {
   const { image, username, first_name, last_name } = props;
 
   return (
-    <div className="flex flex-col items-center">
-      <img
-        src={image}
-        alt={` ${username}'s picture`}
-        className="rounded-full w-28 aspect-square"
-      />
-      <Link to={`profile/${username}`} className="font-bold tracking-wider">
-        {first_name} {last_name}
-      </Link>
-      <p className="text-sm">{username}</p>
-    </div>
+    <Form>
+      <div className="flex flex-col items-center p-3">
+        <img
+          src={image}
+          alt={`${username}'s picture`}
+          className="rounded-full w-28 aspect-square"
+        />
+        <Link
+          className="font-bold tracking-wider dark:text-white"
+          to={`/profile/${username}`}
+        >
+          {first_name} {last_name}
+        </Link>
+        <p className="text-sm dark:text-white">{username}</p>
+      </div>
+    </Form>
   );
 };
 

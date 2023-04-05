@@ -2,26 +2,79 @@ import {
   HiMenu,
   HiUser,
   HiOutlineLogin,
+  HiOutlineLogout,
   HiOutlineUserAdd,
 } from "react-icons/hi";
-import { Menu, Transition } from "@headlessui/react";
-import { FC, Fragment } from "react";
-import { Link } from "react-router-dom";
+import withReactContent from "sweetalert2-react-content";
+import { Menu, Transition, Switch } from "@headlessui/react";
+import { FC, Fragment, useState, useContext, useEffect } from "react";
+import withRouter, { NavigateParam } from "@/utils/navigation";
 
-import withRouter, { NavigateParams } from "@/utils/navigation";
+import { ThemeContext } from "@/utils/context";
+import { RootState } from "@/utils/types/redux";
+import { useSelector } from "react-redux";
+import { useCookies } from "react-cookie";
+import { Link, useNavigate } from "react-router-dom";
 import Images from "../assets/react.svg";
+import Swal from "@/utils/swal";
 
-const Navbar: FC<NavigateParams> = (props) => {
+const Navbar: FC<NavigateParam> = (props) => {
+  const { uname, isLoggedIn } = useSelector((state: RootState) => state.data);
+  const { theme, setTheme } = useContext(ThemeContext);
+  const [enabled, setEnabled] = useState(false);
+  const [, , removeCookie] = useCookies();
+  const MySwal = withReactContent(Swal);
+  const navigate = useNavigate();
+
+  function handleTheme(mode: string) {
+    setTheme(mode);
+  }
+
+  function handleLogout() {
+    MySwal.fire({
+      title: "Logout",
+      text: "Are you sure?",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        removeCookie("tkn");
+        removeCookie("uname");
+        navigate("/login");
+      }
+    });
+  }
+
   return (
-    <nav className="bg-cyan-900 w-full h-12 flex items-center justify-between p-5">
+    <nav className="bg-cyan-900 dark:bg-slate-800 w-full h-12 flex items-center justify-between p-5">
       <Link to="/">
-        <img src={Images} alt="" />
+        <div className="flex flex-row ">
+          <img src={Images} alt="" />
+          <p className="text-white p-2 font-bold">User Management</p>
+        </div>
       </Link>
-      <Menu as="div" className="relative inline-block text-left">
-        <div>
-          <Menu.Button className="inline-flex w-full justify-center rounded-md bg-black bg-opacity-20 px-4 py-2 text-sm font-medium text-white hover:bg-opacity-30 focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75">
-            <HiMenu className="h-5 " />
-          </Menu.Button>
+
+      <Menu as="div" className=" relative inline-block text-left">
+        <div className="flex flex-row items-center">
+          <div className="p-3">
+            <Switch
+              checked={enabled}
+              onChange={setEnabled}
+              className={`${
+                enabled ? "bg-white bg-opacity-20" : "bg-black bg-opacity-20"
+              } relative inline-flex h-6 w-11 items-center rounded-full`}
+              onClick={() => handleTheme(theme === "dark" ? "light" : "dark")}
+            >
+              <span
+                className={`${
+                  enabled ? "translate-x-6" : "translate-x-1"
+                } inline-block h-4 w-4 transform rounded-full bg-white transition`}
+              />
+            </Switch>
+          </div>
+          <div>
+            <Menu.Button className="inline-flex w-full justify-center rounded-md bg-blackbg-opacity-20 px-4 py-2 text-sm font-medium text-white bg-black bg-opacity-20 dark:bg-white  dark:bg-opacity-20 hover:bg-opacity-30 focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75">
+              <HiMenu className="h-5 " />
+            </Menu.Button>
+          </div>
         </div>
         <Transition
           as={Fragment}
@@ -32,46 +85,48 @@ const Navbar: FC<NavigateParams> = (props) => {
           leaveFrom="transform opacity-100 scale-100"
           leaveTo="transform opacity-0 scale-95"
         >
-          <Menu.Items className="absolute right-0 mt-2 w-56 origin-top-right divide-y divide-gray-100 rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
+          <Menu.Items className="absolute right-0 mt-2 w-56 origin-top-right divide-y divide-gray-100 rounded-md bg-white  dark:bg-gray-500  shadow-lg ring-1 ring-blue-600 ring-opacity-5 focus:outline-none">
+            {isLoggedIn && (
+              <Menu.Item>
+                {({ active }) => (
+                  <button
+                    className={`${
+                      active
+                        ? "bg-cyan-900 dark:bg-slate-800 text-white"
+                        : "text-gray-900 dark:text-gray-200"
+                    } group flex w-full items-center rounded-md px-2 py-2 text-sm`}
+                    onClick={() => navigate(`/profile/${uname}`)}
+                    id="nav-profile"
+                  >
+                    <HiUser className="h-5 mr-2 w-5" />
+                    Profile
+                  </button>
+                )}
+              </Menu.Item>
+            )}
             <Menu.Item>
               {({ active }) => (
                 <button
                   className={`${
-                    active ? "bg-cyan-900 text-white" : "text-gray-900"
+                    active
+                      ? "bg-cyan-900 dark:bg-slate-800 text-white"
+                      : "text-gray-900 dark:text-gray-200"
                   } group flex w-full items-center rounded-md px-2 py-2 text-sm`}
-                  onClick={() => props.navigate(`profile/testing`)}
+                  onClick={() =>
+                    isLoggedIn ? handleLogout() : navigate("/login")
+                  }
                 >
-                  {" "}
-                  <HiUser className="h-5 mr-2" />
-                  Profile
-                </button>
-              )}
-            </Menu.Item>
-            <Menu.Item>
-              {({ active }) => (
-                <button
-                  className={`${
-                    active ? "bg-cyan-900 text-white" : "text-gray-900"
-                  } group flex w-full items-center rounded-md px-2 py-2 text-sm`}
-                  onClick={() => props.navigate(`/login`)}
-                >
-                  {" "}
-                  <HiOutlineLogin className="h-5 mr-2" />
-                  <a> Login</a>
-                </button>
-              )}
-            </Menu.Item>
-            <Menu.Item>
-              {({ active }) => (
-                <button
-                  className={`${
-                    active ? "bg-cyan-900 text-white" : "text-gray-900"
-                  } group flex w-full items-center rounded-md px-2 py-2 text-sm`}
-                  onClick={() => props.navigate(`/register`)}
-                >
-                  {" "}
-                  <HiOutlineUserAdd className="h-5 mr-2" />
-                  Register
+                  {isLoggedIn ? (
+                    <>
+                      <HiOutlineLogout className="h-5 mr-2 w-5" />
+                      Logout
+                    </>
+                  ) : (
+                    <>
+                      <HiOutlineLogin className="h-5 mr-2 w-5" />
+                      Login
+                    </>
+                  )}
                 </button>
               )}
             </Menu.Item>
@@ -81,4 +136,5 @@ const Navbar: FC<NavigateParams> = (props) => {
     </nav>
   );
 };
-export default withRouter(Navbar);
+
+export default Navbar;
