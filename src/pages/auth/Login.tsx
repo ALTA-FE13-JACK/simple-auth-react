@@ -6,11 +6,9 @@ import { useDispatch } from "react-redux";
 import axios from "axios";
 
 import Form from "@/components/Form";
-import Image from "@/assets/react.svg";
-import { Input } from "@/components/Input"; // named import
+import { Input } from "@/components/Input";
 import Layout from "@/components/Layout";
-import Button from "@/components/Button"; // import default
-import { handleAuth } from "@/utils/redux/reducers/reducer";
+import Button from "@/components/Button";
 import { useTitle } from "@/utils/hooks";
 import Swal from "@/utils/swal";
 
@@ -52,8 +50,6 @@ const Login: FC = () => {
           if (result.isConfirmed) {
             setCookie("tkn", data.token);
             setCookie("uname", data.username);
-            // localStorage.setItem("tkn", data.token) // disimpan dengan nama tkn dan nilai harus string
-            // localStorage.setItem("uname", data.username) // disimpan dengan nama uname dan nilai harus string
             navigate("/");
           }
         });
@@ -74,7 +70,6 @@ const Login: FC = () => {
       <Form>
         <form
           className="flex flex-col p-5 items-center gap-3"
-          // onSubmit={this.handleSubmit}
           onSubmit={(event) => handleSubmit(event)}
         >
           <h1 className="font-bold text-3xl text-back dark:text-white">

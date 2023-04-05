@@ -38,7 +38,6 @@ const Router: FC = () => {
     },
     {
       path: "/register",
-
       element: getToken ? <Navigate to="/" /> : <Register />,
     },
     {

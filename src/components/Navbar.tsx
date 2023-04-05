@@ -8,7 +8,7 @@ import {
 import withReactContent from "sweetalert2-react-content";
 import { Menu, Transition, Switch } from "@headlessui/react";
 import { FC, Fragment, useState, useContext, useEffect } from "react";
-import withRouter, { NavigateParam } from "@/utils/navigation";
+import { NavigateParam } from "@/utils/navigation";
 
 import { ThemeContext } from "@/utils/context";
 import { RootState } from "@/utils/types/redux";
@@ -18,7 +18,7 @@ import { Link, useNavigate } from "react-router-dom";
 import Images from "../assets/react.svg";
 import Swal from "@/utils/swal";
 
-const Navbar: FC<NavigateParam> = (props) => {
+const Navbar: FC = () => {
   const { uname, isLoggedIn } = useSelector((state: RootState) => state.data);
   const { theme, setTheme } = useContext(ThemeContext);
   const [enabled, setEnabled] = useState(false);

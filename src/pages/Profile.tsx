@@ -7,7 +7,6 @@ import axios from "axios";
 import Form from "@/components/Form";
 import { RootState } from "@/utils/types/redux";
 import { UserEdit } from "@/utils/types/user";
-import { useTitle } from "@/utils/hooks";
 import Swal from "@/utils/swal";
 import { Input } from "@/components/Input";
 import Layout from "@/components/Layout";
@@ -144,13 +143,6 @@ const Profile: FC = () => {
                 defaultValue={data.last_name}
                 onChange={(event) =>
                   handleChange(event.target.value, "last_name")
-                }
-              />
-              <Input
-                placeholder="Username"
-                defaultValue={data.first_name}
-                onChange={(event) =>
-                  handleChange(event.target.value, "username")
                 }
               />
               <Input

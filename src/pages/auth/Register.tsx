@@ -131,3 +131,4 @@ const Register: FC = () => {
 };
 
 export default Register;
+// export default withRouter(Register);

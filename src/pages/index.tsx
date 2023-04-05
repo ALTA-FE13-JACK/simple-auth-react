@@ -30,7 +30,6 @@ const Home: FC = () => {
         setDatas(data);
       })
       .catch((error) => {
-        console.log(error);
         alert(error.toString());
       })
       .finally(() => setLoading(false));
