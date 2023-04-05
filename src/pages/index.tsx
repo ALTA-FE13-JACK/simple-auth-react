@@ -1,3 +1,4 @@
+import { useTitle, useFetchGet } from "@/utils/hooks";
 import { FC, useState, useEffect } from "react";
 import { Spinner } from "@/components/Loading";
 import { UserType } from "@/utils/types/user";
@@ -9,6 +10,10 @@ import axios from "axios";
 const Home: FC = () => {
   const [datas, setDatas] = useState<UserType[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
+  const [data] = useFetchGet(
+    "https://virtserver.swaggerhub.com/devanada/hells-kitchen/1.1.0/users/users"
+  );
+  useTitle("Homepage | User Management");
 
   useEffect(() => {
     fetchData();
@@ -41,6 +46,7 @@ const Home: FC = () => {
       });
   }
 
+  console.log(data);
   return (
     <Layout>
       <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">

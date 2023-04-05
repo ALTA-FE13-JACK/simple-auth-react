@@ -1,5 +1,5 @@
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
-import { Component } from "react";
+import { FC } from "react";
 import axios from "axios";
 
 import Home from "@/pages";
@@ -29,10 +29,8 @@ const router = createBrowserRouter([
   },
 ]);
 
-export class Router extends Component {
-  render() {
-    return <RouterProvider router={router} />;
-  }
-}
+export const Router: FC = () => {
+  return <RouterProvider router={router} />;
+};
 
 export default Router;

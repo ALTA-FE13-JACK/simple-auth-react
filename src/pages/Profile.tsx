@@ -1,6 +1,7 @@
 import { FC, FormEvent, useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { UserEdit } from "@/utils/types/user";
+import { useTitle } from "@/utils/hooks";
 
 import Layout from "@/components/Layout";
 import Button from "@/components/Button";
@@ -15,6 +16,8 @@ const Profile: FC = () => {
   const [loading, setLoading] = useState<boolean>(true);
   const [isEdit, setIsEdit] = useState<boolean>(false);
   const params = useParams();
+  useTitle("Profile | User Management");
+
   useEffect(() => {
     fecthData();
   }, []);
@@ -25,6 +28,7 @@ const Profile: FC = () => {
       .get(`users/${username}`)
       .then((response) => {
         const { data } = response.data;
+        // document.title = `Profile ${username} | User Management`;
         setData(data);
         setImage(data.image);
       })
